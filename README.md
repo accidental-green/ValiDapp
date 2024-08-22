@@ -5,7 +5,7 @@ Open a new terminal (ctrl + alt + T) and enter the following command to run Vali
 ```bash
 sudo apt update && sudo apt install libfuse2 -y && wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage && chmod +x ValiDapp-1.0.0.AppImage && sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp && validapp
 ```
-Enter your password, let everything install and wait for the validator install screen to appear as shown below
+Enter your password and wait for the validator install screen to appear as shown below:
 
 ## Validator Installer
 Choose validator settings and click **Install Validator**
