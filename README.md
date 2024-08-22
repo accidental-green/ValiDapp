@@ -60,3 +60,10 @@ Deleter can be used to easily remove clients and data
 
 <img src="https://github.com/user-attachments/assets/36e54392-b03a-4d69-bc4e-e120a05d0396" alt="ValiDapp Application" width="300">
 <img src="https://github.com/user-attachments/assets/335112b0-acd3-4088-82ca-0440418ecccd" alt="Favorites" width="300">
+
+## Helpful Resources
+Feel free to check out these great staking resources
+
+<img src="https://github.com/user-attachments/assets/97b881bc-d869-4098-b539-bc133cf8c74a" alt="Resources" width="600">
+
+
