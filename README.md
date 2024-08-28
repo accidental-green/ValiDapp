@@ -1,6 +1,8 @@
 # ValiDapp Installation
-## Installation Command
-Open a new terminal (ctrl + alt + T) and enter the following command to run ValiDapp:
+## Single Command Install
+Copy/paste the following command into a new terminal (ctrl + alt + T).
+
+**Note:** Click the copy button (right side) to copy entire command:
 
 ```bash
 sudo apt update && sudo apt install libfuse2 python3 python3-pip curl -y && python3 -m pip install requests && wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage && chmod +x ValiDapp-1.0.0.AppImage && sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp && validapp
