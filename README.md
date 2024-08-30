@@ -1,5 +1,7 @@
 # ValiDapp Installation Guide
 
+   <img src="https://github.com/user-attachments/assets/e7d885d4-e8ca-4ef9-8642-299fc4a8b74f" alt="Validator Install" width="800">
+
 ## Quick Install - Single Command
 
 Open a new terminal (press `Ctrl + Alt + T`) and copy/paste the following command to install ValiDapp:
@@ -12,10 +14,10 @@ sudo apt update && sudo apt install libfuse2 python3 python3-pip curl ntpdate -y
 
 After entering your password, the required packages will be installed, and ValiDapp will open automatically once installation is complete.
 
-## Features Overview
+## ValiDapp Summary
 
 - **Validator Dashboard**: Start, stop, and monitor validator status
-- **Install Validator**: Set up new validator clients
+- **Install Validator**: Install new validator (EC, CC, VC, MEV)
 - **Update Validator**: Upgrade to the latest client versions
 - **Import Keystore**: Import an existing validator keystore
 - **Delete Validator**: Remove validator components and data
