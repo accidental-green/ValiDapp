@@ -1,6 +1,6 @@
 # ValiDapp Installation Guide
 
-## Open Source Ethereum Validator Desktop App
+## Ethereum Validator Desktop App
 
 <img src="https://github.com/user-attachments/assets/ddaf8dd2-e82b-4f44-88e4-f23ee6ab4f27" alt="Validator Install" width="800" />
 
