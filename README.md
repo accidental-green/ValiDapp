@@ -2,7 +2,7 @@
 
    <img src="https://github.com/user-attachments/assets/e7d885d4-e8ca-4ef9-8642-299fc4a8b74f" alt="Validator Install" width="800">
 
-## Quick Install - Single Command
+## Ubuntu - Single Line Install
 
 Open a new terminal (press `Ctrl + Alt + T`) and copy/paste the following command to install ValiDapp:
 
