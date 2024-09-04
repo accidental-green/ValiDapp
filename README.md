@@ -33,17 +33,17 @@ After entering your password, the required packages will be installed, and ValiD
 
 <img src="https://github.com/user-attachments/assets/e7d885d4-e8ca-4ef9-8642-299fc4a8b74f" alt="Validator Install" width="600" />
 
-3. **Keystore Warning** - Only use the keystore import tool for testnet keys.
+2. **Keystore Warning** - Only use the keystore import tool for testnet keys.
 
 For mainnet keys, select "Import Keystore? NO" and follow Somer's guides to manually import.
 
 <img src="https://github.com/user-attachments/assets/cc6854ea-6846-4144-aae6-fba20e6f001a" alt="Import Warning" width="600" />
 
-5. **Confirm Installation**- Review your settings and click **Start Installation**.
+3. **Confirm Installation**- Review your settings and click **Start Installation**.
 
 <img src="https://github.com/user-attachments/assets/ba482f6f-5051-4843-9f02-58d077c79e89" alt="Confirm Install" width="600" />
 
-7. **Import Keystore** - Select the keystore file, enter the password, and click **Import Keystore**.
+4. **Import Keystore** - Select the keystore file, enter the password, and click **Import Keystore**.
 
 <img src="https://github.com/user-attachments/assets/04fa895a-7b20-4eb6-aef1-ab3ebbc25ce2" alt="Import Keystore" width="600" />
 
