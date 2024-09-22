@@ -4,14 +4,6 @@
 
 <img src="https://github.com/user-attachments/assets/ddaf8dd2-e82b-4f44-88e4-f23ee6ab4f27" alt="Validator Install" width="800" />
 
-## Before Installing - Notes
-
-ValiDapp works with both new and existing validator installations that follow [Somer Esat's Staking Guides](https://github.com/SomerEsat/ethereum-staking-guides) (directories, commands, etc.).
-
-- **Existing Clients:** Running ValiDapp will open the validator dashboard.
-- **No Clients Installed:** ValiDapp will open the Validator Installation welcome screen.
-- **Update Validator:** Use the Validator Updater to easily upgrade to the latest Ethereum clients.
-
 ## Ubuntu - Single Line Install
 
 To install ValiDapp on Ubuntu, follow these steps:
@@ -21,17 +13,27 @@ To install ValiDapp on Ubuntu, follow these steps:
 
 **Note:** Use the copy button (right edge of code block) to copy the entire command.
 
+### ValiDapp Installation Command:
+
 ```bash
 sudo apt update && sudo apt install libfuse2 python3 python3-pip curl ntpdate -y && sudo ntpdate ntp.ubuntu.com && python3 -m pip install requests && wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage && chmod +x ValiDapp-1.0.0.AppImage && sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp && validapp
 ```
 
 After entering your password, the required packages will be installed, and ValiDapp will open automatically once installation is complete.
 
-## Installation Steps
+## Startup Notes
+
+ValiDapp works with both new and existing validator installations that follow [Somer Esat's Staking Guides](https://github.com/SomerEsat/ethereum-staking-guides) (directories, commands, etc.).
+
+- If clients are already installed, ValiDapp will open the validator dashboard.
+- If no  clients are installed, ValiDapp will open to the welcome screen.
+- Use the Main Menu to update, delete, import keytstores etc.
+
+## Install New Validator
 
 1. **Validator Installer** - Configure validator settings and click **Install Validator**.
 
-<img src="https://github.com/user-attachments/assets/e7d885d4-e8ca-4ef9-8642-299fc4a8b74f" alt="Validator Install" width="600" />
+<img src="https://github.com/user-attachments/assets/949afeea-eba7-4cbb-85e7-03ed0231aee0" alt="Validator Install" width="600" />
 
 2. **Keystore Warning** - Only use the keystore import tool for testnet keys.
 
@@ -50,7 +52,7 @@ For mainnet keys, select "Import Keystore? NO" and follow Somer's guides to manu
 ## Validator Dashboard
 Monitor your validator status. Click **Start All** to begin syncing.
 
-<img src="https://github.com/user-attachments/assets/8ebb4282-a133-47c8-9850-400362b33ffa" alt="Dashboard" width="600" />
+<img src="https://github.com/user-attachments/assets/9a73ae45-f6cb-4830-95cd-98764f980990" alt="Dashboard" width="600" />
 
 ### View Journals
 Access detailed logs and sync progress.
