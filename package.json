@@ -1,0 +1,71 @@
+{
+  "name": "validapp",
+  "version": "1.0.0",
+  "description": "Electron app for managing Ethereum services",
+  "main": "app/js/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --linux",
+    "postbuild": "chmod +x ./dist/linux-unpacked/resources/python/bin/python && chmod +x ./dist/linux-unpacked/resources/modules/*.py && ./venv/bin/pip install -r requirements.txt"
+  },
+  "build": {
+    "asar": true,
+    "asarUnpack": [
+      "modules/**/*.py"
+    ],
+    "appId": "validapp",
+    "productName": "ValiDapp",
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility",
+      "icon": "app/assets/logo.png"
+    },
+    "files": [
+      "app/**/*",
+      "!node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "./modules/",
+        "to": "modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./app/assets/",
+        "to": "app/assets",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./requirements.txt",
+        "to": "requirements.txt"
+      },
+      {
+        "from": "./venv/bin/python",
+        "to": "python/bin/python",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "./venv/",
+        "to": "venv",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "author": "accidental-green",
+  "devDependencies": {
+    "electron": "13.6.9",
+    "electron-builder": "22.11.7"
+  },
+  "keywords": [],
+  "license": "ISC"
+}

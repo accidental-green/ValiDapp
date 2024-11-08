@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Clients</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 340px;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        th, td {
+            text-align: center;
+            padding: 8px;
+            font-size: 16px;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .warning-info {
+            text-align: center;
+            color: red;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+        .description-info {
+            text-align: center;
+            color: #555;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .link-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .link {
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .link:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            width: 47%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin: 0 1%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-back-orange {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+        }
+        .button-back-orange:hover {
+            background-color: #e59400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="ClientsForm">
+            <h1>Installed Clients</h1>
+            <p class="warning-info">WARNING: You have too many clients installed!</p>
+            <p class="description-info">Please see list of installed clients below, and consider uninstalling any clients you do not use</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Version</th>
+                    </tr>
+                </thead>
+                <tbody id="versionTableBody">
+                    <!-- Data rows will be inserted here dynamically -->
+                </tbody>
+            </table>
+            <p class="description-info">See warning above then click continue to manually select clients</p>
+            <div class="button-container">
+                <button class="button-back-orange" id="backBtn">Back</button>
+                <button type="button" id="continueBtn">Continue</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.api.receive('get-installed-versions', (installedClients) => {
+                const tableBody = document.getElementById('versionTableBody');
+                tableBody.innerHTML = ''; // Clear previous entries
+                installedClients.forEach(clientData => {
+                    const clientName = Object.keys(clientData)[0];
+                    const clientVersion = clientData[clientName];
+                    let clientType = 'Unknown'; // Default type
+
+                    // Determine the client type based on the client name
+                    if (['Geth', 'Besu', 'Nethermind'].includes(clientName)) {
+                        clientType = 'Execution';
+                    } else if (['Teku', 'Nimbus', 'Lighthouse', 'Prysm'].includes(clientName)) {
+                        clientType = 'Consensus';
+                    } else if (clientName === 'Mevboost') {
+                        clientType = 'MEV';
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${clientType}</td><td>${clientName}</td><td>${clientVersion}</td>`;
+                    tableBody.appendChild(row);
+                });
+            });
+        });
+
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            window.api.openConfigPopup();
+            window.close();
+        });
+        document.getElementById('backBtn').addEventListener('click', goBack);
+        document.getElementById('manualSet').addEventListener('click', openManual);
+        
+        function openManual() {
+            window.api.openConfigPopup();
+            window.close();
+        }
+        function goBack() {
+            window.api.openStartupPopup();
+            window.close();
+
+        }
+    </script>
+</body>
+</html>

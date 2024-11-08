@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Journals Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container mt-1">
+        <div class="button-container" style="position: absolute; top: 0; right: 10px; transform: translateY(-5px);">
+            <span class="countdown" style="margin-right: 20px; font-size: 16px;">Logs update in <span id="countdownTimer">10</span> seconds...</span>
+            <button type="button" class="btn btn-primary btn-sm btn-back-to-mini" onclick="goBack()">Back to MiniDash</button>
+        </div>        
+        <div class="row mb-2">
+            <ul class="nav nav-tabs col-md-8" id="dashboardTabs">
+                <li class="nav-item">
+                    <a class="nav-link" id="execution-tab" data-toggle="tab" href="#execution" role="tab" aria-controls="execution" aria-selected="false">Execution</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="consensus-tab" data-toggle="tab" href="#consensus" role="tab" aria-controls="consensus" aria-selected="false">Consensus</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="validator-tab" data-toggle="tab" href="#validator" role="tab" aria-controls="validator" aria-selected="false">Validator</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="mevboost-tab" data-toggle="tab" href="#mevboost" role="tab" aria-controls="mevboost" aria-selected="false">MEV-Boost</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="execution" role="tabpanel" aria-labelledby="execution-tab">
+                <div id="executionLogContent" class="log-content">Execution logs will appear here...</div>
+            </div>
+            <div class="tab-pane fade" id="consensus" role="tabpanel" aria-labelledby="consensus-tab">
+                <div id="consensusLogContent" class="log-content">Consensus logs will appear here...</div>
+            </div>
+            <div class="tab-pane fade" id="validator" role="tabpanel" aria-labelledby="validator-tab">
+                <div id="validatorLogContent" class="log-content">Validator logs will appear here...</div>
+            </div>
+            <div class="tab-pane fade" id="mevboost" role="tabpanel" aria-labelledby="mevboost-tab">
+                <div id="mevboostLogContent" class="log-content">MEV-Boost logs will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#execution-tab').tab('show');
+            startCountdown(10); // Start the countdown with 10 seconds
+        });
+
+        function startCountdown(seconds) {
+            let counter = seconds;
+            const timer = document.getElementById('countdownTimer');
+            timer.textContent = counter;
+
+            const interval = setInterval(() => {
+                counter--;
+                timer.textContent = counter;
+                if (counter <= 0) {
+                    clearInterval(interval);
+                    fetchLogs();
+                    startCountdown(10); // Restart the countdown after logs have been fetched
+                }
+            }, 1000);
+        }
+
+        function adjustDisplayName(name) {
+            if (name === 'lighthousebeacon') {
+                return 'lighthouse';
+            } else if (name === 'prysmbeacon') {
+                return 'prysm';
+            } else if (name === 'lighthousevalidator') {
+                return 'lighthouse';
+            } else if (name === 'prysmvalidator') {
+                return 'prysm';
+            } else {
+                return name; // Return the original name if no adjustments are needed
+            }
+        }
+
+        let journalSettings = { execution: 'Not selected', consensus: 'Not selected', validator: 'Not selected', mevboost: 'Not selected' };
+
+        electronAPI.receive('get-installed-versions', (installedUsers) => {
+            console.log('Installed Users Received:', installedUsers);
+            const settings = categorizeInstalledClients(installedUsers);
+            applySettings(settings);
+            fetchLogs();
+        });
+
+        electronAPI.receive('user-settings', (userSettings) => {
+            if (userSettings && Object.keys(userSettings).length > 0) {
+                // Apply the user settings to the page
+                console.log('User Settings Received:', userSettings);
+                applySettings(userSettings);
+                fetchLogs();
+            }
+        });
+
+        function categorizeInstalledClients(installedClients) {
+            const settings = {
+                execution: 'None',
+                consensus: 'None',
+                validator: 'None',
+                mevboost: 'None'
+            };
+
+            installedClients.forEach(clientData => {
+                const clientName = Object.keys(clientData)[0];
+                const clientVersion = clientData[clientName];
+
+                if (['Geth', 'Nethermind', 'Besu'].includes(clientName)) {
+                    settings.execution = clientName;
+                } else if (['Lighthouse', 'Prysm', 'Teku', 'Nimbus'].includes(clientName)) {
+                    settings.consensus = clientName;
+                    settings.validator = clientName;
+                } else if (clientName === 'Mevboost') {
+                    settings.mevboost = 'on';
+                }
+            });
+
+            return settings;
+        }
+
+        function applySettings(settings) {
+            journalSettings.execution = settings.execution !== 'None' ? settings.execution.toLowerCase() : 'Not selected';
+            journalSettings.consensus = settings.consensus !== 'None' ? adjustDisplayName(settings.consensus).toLowerCase() : 'Not selected';
+            journalSettings.validator = settings.validator !== 'None' ? adjustDisplayName(settings.validator).toLowerCase() : 'Not selected';
+            journalSettings.mevboost = /^(on)$/i.test(settings.mevboost) ? 'ON' : 'OFF';
+        }
+
+        function refreshLogs() {
+            fetchLogs();
+        }
+
+        function fetchLogs() {
+            fetchExecutionLogs();
+            fetchConsensusLogs();
+            fetchValidatorLogs();
+            fetchMevboostLogs();
+        }
+
+        function setLogContent(elementId, logs) {
+            const processedLogs = logs.split('\n').map(line => {
+                // Remove the date, time, and hostname
+                line = line.replace(/^\w{3}\s\d{1,2}\s\d{2}:\d{2}:\d{2}\s\w+\s/, '');
+
+                // Wrap keywords in span with classes for coloring, case-insensitive
+                line = line.replace(/warn/gi, '<span class="log-warn">WARN</span>');
+                line = line.replace(/error/gi, '<span class="log-error">ERROR</span>');
+                line = line.replace(/info /gi, '<span class="log-info">INFO </span>');
+                line = line.replace(/ inf /gi, '<span class="log-info">INF </span>');
+
+                return line;
+            }).join('<br>'); // Use <br> to preserve line breaks in HTML
+
+            document.getElementById(elementId).innerHTML = processedLogs;
+        }
+
+        function fetchExecutionLogs() {
+            window.electron.getLogs(journalSettings.execution, 200).then((logs) => {
+                setLogContent('executionLogContent', logs);
+            });
+        }
+
+        function fetchConsensusLogs() {
+            let service = journalSettings.consensus;
+
+            if (journalSettings.consensus === 'lighthouse') {
+                service = 'lighthousebeacon';
+            } else if (journalSettings.consensus === 'prysm') {
+                service = 'prysmbeacon';
+            }
+
+            window.electron.getLogs(service, 200).then((logs) => {
+                setLogContent('consensusLogContent', logs);
+            });
+            console.log(journalSettings.consensus);
+        }
+
+        function fetchValidatorLogs() {
+            let service = journalSettings.validator;
+
+            if (journalSettings.validator === 'lighthouse') {
+                service = 'lighthousevalidator';
+            } else if (journalSettings.validator === 'prysm') {
+                service = 'prysmvalidator';
+            }
+
+            window.electron.getLogs(service, 200).then((logs) => {
+                setLogContent('validatorLogContent', logs);
+                console.log(journalSettings.validator)
+            });
+        }
+
+        function fetchMevboostLogs() {
+            console.log(journalSettings.mevboost)
+            if (journalSettings.mevboost === 'On' || 'on') {
+                window.electron.getLogs('mevboost', 200).then((logs) => {
+                    setLogContent('mevboostLogContent', logs);
+                });
+            } else {
+                document.getElementById('mevboostLogContent').textContent = "MEV-Boost not active.";
+            }
+        }
+
+        function goBack() {
+            window.api.sendDashboardStart();
+            window.close();
+        }
+    </script>
+</body>
+</html>

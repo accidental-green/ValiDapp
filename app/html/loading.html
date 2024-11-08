@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loading-text {
+            font-size: 50px;
+            color: #333;
+            margin: 10px 0 50px;
+        }
+        .timeout-warning {
+            font-size: 20px;
+            color: red;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-text">Loading...</div>
+    <div class="timeout-warning" id="timeoutWarning">This is taking longer than expected...</div>
+
+    <script>
+        // Set a timeout to show the warning after 10 seconds (10000 milliseconds)
+        setTimeout(function() {
+            document.getElementById('timeoutWarning').style.display = 'block';
+        }, 10000);
+    </script>
+</body>
+</html>

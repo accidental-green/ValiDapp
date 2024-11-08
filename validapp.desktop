@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ValiDapp
+Comment=Ethereum Validator Management App
+Exec=/home/kevin/ValiDapp/dist/./ValiDapp-1.0.0.AppImage
+Icon=/home/kevin/ValiDapp/app/assets/logo.png
+Terminal=true
+Type=Application
+Categories=Utility;Application;
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Installation</title>
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif; 
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 450px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .details {
+            margin-bottom: 20px;
+            font-size: 20px;
+            align-items: center;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .label {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            width: 49%;
+        }
+        .detail-value {
+            text-align: left;
+            width: 49%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-wrap: wrap;
+        }
+
+        button {
+            width: 47%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin: 0 1%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-back-orange {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+        }
+
+        .button-back-orange:hover {
+            background-color: #e59400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Installation</h1>
+        <div class="details">
+            <div class="detail-item">
+                <span class="label">Network:</span>
+                <span class="detail-value" id="networkConfirm"></span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Execution:</span>
+                <span class="detail-value" id="executionConfirm"></span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Consensus:</span>
+                <span class="detail-value" id="consensusConfirm"></span>
+            </div>
+            <div class="detail-item">
+                <span class="label">MEVboost:</span>
+                <span class="detail-value" id="mevboostConfirm"></span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Fee Address:</span>
+                <span class="detail-value" id="feeAddressConfirm"></span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Import Keystore:</span>
+                <span class="detail-value" id="keystoreConfirm"></span>
+            </div>
+        </div>
+        <div class="button-container">
+            <button class="button-back-orange" onclick="goBack()">Back</button>
+            <button id="startInstallationBtn">Start Installation</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('startInstallationBtn').addEventListener('click', async () => {
+            const hasSudo = await window.electronAPI.requireSudo();
+            if (!hasSudo) {
+                alert('Sudo privileges have expired, please restart application.');
+                return;
+            }
+            
+            const network = globalSettings.network;
+            const ec_install = globalSettings.execution;
+            const cc_install = globalSettings.consensus;
+            const mev_on_off = globalSettings.mevboost;
+            const feeAddress = globalSettings.feeAddress;
+            const keystore = globalSettings.keystore;
+
+            window.api.sendInstallationStart({ network: network, execution: ec_install, consensus: cc_install, validator: cc_install, mevboost: mev_on_off, feeAddress: feeAddress, keystore: keystore});
+
+        });
+
+        let globalSettings = {
+            network: '',
+            execution: '',
+            consensus: '',
+            mevboost: '',
+            feeAddress: '',
+            keystore: '',
+
+        };
+
+        function shortAddress(address) {
+            if (!address) return 'Not Provided';
+            return address.length > 12 ? `${address.slice(0, 6)}...${address.slice(-6)}` : address;
+        }
+
+        window.api.receive('install-settings', (settings) => {
+            // Store settings in global variables
+            globalSettings.network = settings.network || 'Not Selected';
+            globalSettings.execution = settings.execution || 'Not Selected';
+            globalSettings.consensus = settings.consensus || 'Not Selected';
+            globalSettings.mevboost = settings.mevboost || 'Not Selected';
+            globalSettings.feeAddress = settings.feeAddress || '';
+            globalSettings.keystore = settings.keystore || 'Not Selected';
+
+
+            // Display settings in the UI
+            document.getElementById('networkConfirm').textContent = globalSettings.network.toUpperCase();
+            document.getElementById('executionConfirm').textContent = globalSettings.execution.toUpperCase();
+            document.getElementById('consensusConfirm').textContent = globalSettings.consensus.toUpperCase();
+            document.getElementById('mevboostConfirm').textContent = globalSettings.mevboost.toUpperCase();
+            document.getElementById('feeAddressConfirm').textContent = shortAddress(globalSettings.feeAddress);
+            document.getElementById('keystoreConfirm').textContent = globalSettings.keystore.toUpperCase();
+        });
+
+        function goBack() {
+            window.api.openFreshStartupPopup();
+            window.close();
+        }
+    </script>
+</body>
+</html>

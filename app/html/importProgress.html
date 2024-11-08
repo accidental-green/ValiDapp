@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Progress</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 560px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .output-container {
+            width: 100%;
+            height: 320px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            font-size: 16px;
+            white-space: pre-wrap;
+            box-sizing: border-box;
+        }
+        .progress-bar-container {
+            margin-bottom: 20px;
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            transition: width 0.4s ease-in-out;
+        }
+        button {
+            width: 300px;
+            max-height: 40px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin: 0 1%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-back-orange {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+        }
+
+        .button-back-orange:hover {
+            background-color: #e59400;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Import Progress</h1>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="output-container" id="output">STARTING KEYSTORE IMPORT...</div>
+        <div class="button-container">
+            <button class="button-back-orange" onclick="goBack()">Main Menu</button>
+            <button id="openDashboardBtn" disabled>Processing Import...</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('openDashboardBtn').disabled = true;
+
+        document.getElementById('openDashboardBtn').addEventListener('click', () => {
+            window.api.sendDashboardStart();
+        });
+    
+        window.api.receive('process-output', (data) => {
+            const outputElement = document.getElementById('output');
+            
+            // Create a new paragraph for each update
+            const newUpdate = document.createElement('p');
+            newUpdate.textContent = data; // Add the text content to the new paragraph
+            outputElement.appendChild(newUpdate); // Append the new paragraph to the output container
+            
+            updateProgressBar(20);
+            // Update progress bar based on specific data
+            if (data.includes('Successfully Imported Nimbus Keystores')) {
+                updateProgressBar(60);
+            } else if (data.includes('testing')) {
+                updateProgressBar(60);
+            } else if (data.includes('STEP 2')) {
+                updateProgressBar(35);
+            } else if (data.includes('STEP 3')) {
+                updateProgressBar(55);
+            } else if (data.includes('STEP 4')) {
+                updateProgressBar(75);
+            } else if (data.includes('STEP 5')) {
+                updateProgressBar(85);
+            }
+        });
+    
+        window.api.receive('process-complete', (message) => {
+            const outputElement = document.getElementById('output');
+            
+            // Add completion message as a new paragraph
+            const completionMessage = document.createElement('p');
+            completionMessage.textContent = message;
+            outputElement.appendChild(completionMessage);
+    
+            if (message.includes("----END OF IMPORT PROCESS----")) {
+                updateProgressBar(100);
+                document.getElementById('openDashboardBtn').textContent = "Open Dashboard";
+                document.getElementById('openDashboardBtn').disabled = false;
+            }
+        });
+    
+        function updateProgressBar(percentage) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+        }
+        function goBack() {
+            window.api.openStartupPopup();
+            window.close();
+        }
+    </script>    
+</body>
+</html>

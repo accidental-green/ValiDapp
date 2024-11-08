@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValiDapp</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 15px 25px;
+            padding-top: 0px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 500px;
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ccc;
+        }
+        .card {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button {
+            flex: 4;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 22px;
+            padding: 12px 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        .description {
+            flex: 7;
+            font-size: 22px;
+            color: black;
+            font-weight: 500;
+            margin: 0;
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 10px;
+            background: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .line {
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin: 10px 0;
+        }
+        #installValidator, #updateClients {
+            background-color: #34c759;
+        }
+        #deleteButton {
+            background-color: rgba(255, 0, 0, 0.737);
+
+        }
+        #importKeystore {
+            background-color: #f5a623;
+        }
+        #openDashboard {
+            background-color: #007aff;
+        }
+        button:hover {
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Main Menu</h1>
+        <div class="card">
+            <button id="openDashboard" class="button">Dashboard</button>
+            <p class="description">Start/Stop Local Node</p>
+        </div>
+        <div class="line"></div> <!-- Separate line between Dashboard and Install -->
+        <div class="card">
+            <button id="installValidator" class="button">Install</button>
+            <p class="description">Install New Validator</p>
+        </div>
+        <div class="card">
+            <button id="updateClients" class="button">Update</button>
+            <p class="description">Update Ethereum Clients</p>
+        </div>
+        <div class="line"></div> <!-- Separate line between Update and Import -->
+        <div class="card">
+            <button id="importKeystore" class="button">Keystore</button>
+            <p class="description">Import Validator Keystore</p>
+        </div>
+        <div class="card">
+            <button id="deleteButton" class="button">Delete</button>
+            <p class="description">Remove Clients & Data</p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('openDashboard').addEventListener('click', () => {
+            window.api.openPreConfigPopup();
+            window.close();
+        });
+        document.getElementById('installValidator').addEventListener('click', () => {
+            window.api.openClientWarningPopup();
+        });
+        document.getElementById('updateClients').addEventListener('click', () => {
+            window.api.openUpdatePopup();
+        });
+        document.getElementById('importKeystore').addEventListener('click', () => {
+            window.api.openImportWarningPopup();
+        });
+        document.getElementById('deleteButton').addEventListener('click', () => {
+            window.api.openDeletePopup();
+        });
+    </script>    
+</body>
+</html>

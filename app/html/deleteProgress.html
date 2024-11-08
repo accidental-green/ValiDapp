@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Progress</title>
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .output-container {
+            width: 100%;
+            height: 320px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            font-size: 16px;
+            white-space: pre-wrap;
+            box-sizing: border-box;
+        }
+        .progress-bar-container {
+            margin-bottom: 20px;
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4CAF50;
+            transition: width 0.4s ease-in-out;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            background-color: #ccc; /* Keeps the color consistent on hover when disabled */
+        }
+        h1 {
+            margin: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delete Progress</h1>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="output-container" id="output">STARTING DELETE PROCESS...</div>
+        <button id="mainMenuBtn" disabled>Processing...</button>
+    </div>
+    <script>
+        document.getElementById('mainMenuBtn').addEventListener('click', () => {
+            window.api.openStartupPopup();
+            window.close();
+        });
+
+        window.api.receive('process-output', (data) => {
+            const outputElement = document.getElementById('output');
+            outputElement.textContent += '\n' + data;
+        });
+
+        window.api.receive('process-complete', (message) => {
+            const outputElement = document.getElementById('output');
+            outputElement.textContent += '\n' + message;
+            
+            if (message.includes("---DELETION PROCESS COMPLETE---")) {
+                updateProgressBar(100);
+                document.getElementById('mainMenuBtn').textContent = "Main Menu";
+                document.getElementById('mainMenuBtn').disabled = false;
+            }
+        });
+
+        function updateProgressBar(percentage) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+        }
+    </script>
+</body>
+</html>

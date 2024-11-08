@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ValiDapp</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px; 
+        }
+        .beaconchain-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+        }
+        .container-wrapper {
+            display: flex; 
+            width: 100%; 
+            max-width: 200px;
+        }
+        .dashboard-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 0px;
+        }
+        .instructions-container {
+            flex: 1.5;
+            background: white;
+            margin-left: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 300px;
+            max-width: 350px;
+        }
+        .node-container {
+            flex: 1.5;
+            background: white;
+            padding: 20px;
+            margin-right: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 420px;
+            width: 350px;
+            min-width: 350px;
+            max-width: 350px;
+        }
+        .header {
+            margin: -13px 0px -5px 0px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            margin-top: -5px;
+            font-size: 38px;
+            color: #333;
+            text-align: center;
+        }
+        .link-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px; /* Smaller font size for smaller buttons */
+            width: 40%; /* Adjust width to be smaller */
+        }
+
+        .link-button:hover {
+            background-color: #0056b3;
+        }
+
+        .additional-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .link {
+            padding: 5px 0px;
+            font-size: 16px;
+            margin: 0px -10px;
+            color: #007bff !important;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .link:hover {
+            text-decoration: underline;
+            color: #0056b3 !important;
+        }
+        table {
+            width: 90%;
+            margin: 10px auto;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        th, td {
+            text-align: center;
+            padding: 5px;
+            font-size: 16px;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        button {
+            width: 48%;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            color: white;
+            font-size: 22px;
+            border: none;
+            cursor: pointer;
+        }
+        #stopAll {
+            background-color: #dc3545; /* Red for Stop All */
+        }
+        #startAll {
+            background-color: #28a745; /* Green for Start All */
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        button:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+        button:disabled:hover {
+            background-color: #ccc;
+        }
+        .view-journals-link {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .view-journals-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .timeline-step {
+            text-align: center;
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+        }
+        .icon {
+            width: 35px;
+            height: 35px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            color: #aaa;
+        }
+        .active .icon {
+            color: #baa0e3;
+        }
+        .active span {
+            color: black;
+        }
+        #validatorIndex {
+            padding: 2px 2px;
+            width: 70%;
+            margin-right: 10px;
+            text-align: center;
+        }
+        .line {
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .line1 {
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .line2 {
+            height: 2px;
+            background-color: black;
+            width: 100%;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+        .local-status-title {
+            font-size: 38px;
+            color: #333;
+            margin-bottom: -5px;
+            margin-top: 5px;
+            text-align: center;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 16px;
+            color: black;
+            margin-top: 0px;
+            margin-bottom: 10px;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">        
+        <div class="node-container">
+            <h1>Local Node</h1>
+            <div class="line1"></div>
+            <p class="local-status-title" id="localStatus">ACTIVE</p>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <svg id="nodeIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                        <path d="M6 12h0"></path>
+                    </svg>
+                    <span>Node</span>
+                </div>
+                <div class="timeline-step">
+                    <svg id="validatorIcon" class="icon" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+                        <polygon fill="none" stroke="currentColor" stroke-width="2" points="12,2 22,18 2,18" />
+                        <polygon fill="none" stroke="currentColor" stroke-width="2" points="12,34 22,18 2,18" />
+                        <polygon fill="none" stroke="currentColor" stroke-width="2" points="12,13 20,18 4,18" />
+                        <polygon fill="none" stroke="currentColor" stroke-width="2" points="12,25 20,18 4,18" />
+                        <polygon fill="white" points="12,16 18,18 12,20 6,18" />
+                    </svg>
+                    <span>Validator</span>
+                </div>
+                <div class="timeline-step">
+                    <svg id="mevIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="16 12 12 8 8 12"></polyline>
+                        <line x1="12" y1="16" x2="12" y2="8"></line>
+                    </svg>
+                    <span>MEV</span>
+                </div>
+            </div>
+            <table class="info-table">
+                <tr>
+                    <th>Client</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Execution</td>
+                    <td id="executionValue">Not selected</td>
+                    <td id="executionStatus">-</td>
+                </tr>
+                <tr>
+                    <td>Consensus</td>
+                    <td id="consensusValue">Not selected</td>
+                    <td id="consensusStatus">-</td>
+                </tr>
+                <tr>
+                    <td>Validator</td>
+                    <td id="validatorValue">Not selected</td>
+                    <td id="validatorStatus">-</td>
+                </tr>
+                <tr>
+                    <td>Mevboost</td>
+                    <td id="mevboostValue">Not selected</td>
+                    <td id="mevboostStatus">-</td>
+                </tr>
+            </table>
+            <div class="button-container">
+                <button id="stopAll" class="btn btn-danger btn-lg">Stop</button>
+                <button id="startAll" class="btn btn-success btn-lg">Start</button>
+            </div>
+        </div>
+        <div class="instructions-container">
+            <h1 style="text-align: center;">Instructions</h1>
+            <div class="line2"></div>
+            <p>To begin syncing, click <b>START</b></p>
+            <p>Once all clients show <b>ACTIVE</b>, they begin communicating and eventually sync.</p>
+            <p>Initial sync can take up to 24 hours. You can <a href="#"
+                    onclick="window.api.sendJournalsStart(); return false;">View Logs</a> to check progress and <a
+                    href="https://beaconcha.in" onclick="electronShell.openExternal(this.href); return false;">beaconcha.in</a>
+                to confirm validator is online.</p>
+            <p><b>Note:</b> ValiDapp is compatible with Somer Esat's guides (commands, directories etc)</p>
+            <div class="footer">
+                <b>Need help?</b> <a href="#" onclick="openResourcesDashboardPopup(); return false;">List of Staking Resources</a>
+            </div>
+            <div class="additional-buttons">
+                <button class="link-button" id="mainMenuButton" onclick="window.api.openStartupPopup();">Main Menu</button>
+                <button class="link-button" id="journalsButton" onclick="window.api.sendJournalsStart();">View Logs</button>
+            </div>            
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            electronAPI.receive('get-installed-versions', (installedUsers) => {
+                console.log('Installed Users Received:', installedUsers);
+                const settings = categorizeInstalledClients(installedUsers);
+                applySettings(settings);
+            });
+        });
+
+        electronAPI.receive('user-settings', (userSettings) => {
+            if (userSettings && Object.keys(userSettings).length > 0) {
+                // Apply the user settings to the page
+                console.log('User Settings Received:', userSettings);
+                applySettings(userSettings);
+            }
+        });
+
+        function categorizeInstalledClients(installedClients) {
+            const settings = {
+                execution: 'None',
+                consensus: 'None',
+                validator: 'None',
+                mevboost: 'None'
+            };
+
+            installedClients.forEach(clientData => {
+                const clientName = Object.keys(clientData)[0];
+                const clientVersion = clientData[clientName];
+
+                if (['Geth', 'Nethermind', 'Besu'].includes(clientName)) {
+                    settings.execution = clientName;
+                } else if (['Lighthouse', 'Prysm', 'Teku', 'Nimbus'].includes(clientName)) {
+                    settings.consensus = clientName;
+                    settings.validator = clientName;
+                } else if (clientName === 'Mevboost') {
+                    settings.mevboost = 'on';
+                }
+            });
+
+            return settings;
+        }
+
+        function applySettings(settings) {
+            document.getElementById('executionValue').textContent = settings.execution !== 'None' ? settings.execution.toUpperCase() : 'Not selected';
+            document.getElementById('consensusValue').textContent = settings.consensus !== 'None' ? adjustDisplayName(settings.consensus).toUpperCase() : 'Not selected';
+            document.getElementById('validatorValue').textContent = settings.validator !== 'None' ? adjustDisplayName(settings.validator).toUpperCase() : 'Not selected';
+            document.getElementById('mevboostValue').textContent = settings.mevboost === 'on' ? 'ON' : 'OFF';
+            fetchAndUpdateServices();
+        }
+
+        function adjustDisplayName(name) {
+            if (name === 'lighthousebeacon') {
+                return 'Lighthouse';
+            } else if (name === 'prysmbeacon') {
+                return 'Prysm';
+            } else if (name === 'lighthousevalidator') {
+                return 'Lighthouse';
+            } else if (name === 'prysmvalidator') {
+                return 'Prysm';
+            } else {
+                return name; // Return the original name if no adjustments are needed
+            }
+        }
+
+        function openResourcesDashboardPopup() {
+            window.api.openResourcesDashboardPopup();
+        }
+
+        async function fetchAndUpdateServices() {
+            await fetchServicesStatus(); // Ensure service statuses are updated before updating the timeline
+            updateTimeline();            // Update the timeline based on the latest statuses
+        }
+
+        setInterval(fetchAndUpdateServices, 5000);
+
+        async function fetchServicesStatus() {
+            try {
+                console.log('Fetching services status...');
+                let runningServices = await window.electronAPI.checkServicesStatus();
+                console.log('Running Services:', runningServices);
+
+                // Correctly retrieving text content and converting it to lowercase
+                let consensusDisplayName = document.getElementById('consensusValue').textContent.toLowerCase();
+                let validatorDisplayName = document.getElementById('validatorValue').textContent.toLowerCase();
+
+                // Function to adjust the service names for checking their status
+                function adjustConsensusFunc(displayName) {
+                    if (displayName.includes("lighthouse")) {
+                        return "lighthousebeacon";
+                    } else if (displayName.includes("prysm")) {
+                        return "prysmbeacon";
+                    } else {
+                        return displayName; // return the original display name if no conditions are met
+                    }
+                }
+                
+                function adjustValidatorFunc(displayName) {
+                    if (displayName.includes("lighthouse")) {
+                        return "lighthousevalidator";
+                    } else if (displayName.includes("prysm")) {
+                        return "prysmvalidator";
+                    } else {
+                        return displayName; // return the original display name if no conditions are met
+                    }
+                }
+
+                let adjustedConsensusName = adjustConsensusFunc(consensusDisplayName);
+                let adjustedValidatorName = adjustValidatorFunc(validatorDisplayName);
+
+                // Set the status on the UI based on whether the service name is in the runningServices list
+                setServiceStatus('executionStatus', runningServices.includes(document.getElementById('executionValue').textContent.toLowerCase()) ? '<span class="text-success">Active</span>' : '<span class="text-danger">Stopped</span>');
+                setServiceStatus('consensusStatus', runningServices.includes(adjustedConsensusName) ? '<span class="text-success">Active</span>' : '<span class="text-danger">Stopped</span>');
+                setServiceStatus('validatorStatus', runningServices.includes(adjustedValidatorName) ? '<span class="text-success">Active</span>' : '<span class="text-danger">Stopped</span>');
+                setServiceStatus('mevboostStatus', runningServices.includes('mevboost') ? '<span class="text-success">Active</span>' : '<span class="text-danger">Stopped</span>');
+
+            } catch (error) {
+                console.error('Failed to fetch services status:', error);
+            }
+        }
+
+        electronAPI.receive('sudo-required', (message) => {
+            alert(message); // Alerts the user when sudo is needed
+        });
+
+        document.getElementById('startAll').addEventListener('click', async () => {
+            const hasSudo = await window.electronAPI.requireSudo();
+            if (!hasSudo) {
+                alert('Sudo privileges are required to start services. Please restart the application.');
+                return;
+            }
+
+            const settings = {
+                execution: document.getElementById('executionValue').textContent,
+                consensus: document.getElementById('consensusValue').textContent,
+                validator: document.getElementById('validatorValue').textContent,
+                mevboost: document.getElementById('mevboostValue').textContent === 'ON' ? 'ON' : 'OFF',
+            };
+
+            try {
+                setServiceStatus('executionStatus', '<span class="text-info">Starting</span>');
+                setServiceStatus('consensusStatus', '<span class="text-info">Starting</span>');
+                setServiceStatus('validatorStatus', '<span class="text-info">Starting</span>');
+                setServiceStatus('mevboostStatus', '<span class="text-info">Starting</span>');
+
+                await window.electronAPI.startServices(settings);
+            } catch (error) {
+                console.error('Failed to start services:', error);
+            }
+        });
+
+        document.getElementById('stopAll').addEventListener('click', async () => {
+            const hasSudo = await window.electronAPI.requireSudo();
+            if (!hasSudo) {
+                alert('Sudo privileges are required to stop services. Please restart the application');
+                return;
+            }
+
+            const settings = {
+                execution: document.getElementById('executionValue').textContent,
+                consensus: document.getElementById('consensusValue').textContent,
+                validator: document.getElementById('validatorValue').textContent,
+                mevboost: document.getElementById('mevboostValue').textContent === 'ON' ? 'ON' : 'OFF',
+            };
+
+            try {
+                setServiceStatus('executionStatus', '<span class="text-warning">Stopping</span>');
+                setServiceStatus('consensusStatus', '<span class="text-warning">Stopping</span>');
+                setServiceStatus('validatorStatus', '<span class="text-warning">Stopping</span>');
+                setServiceStatus('mevboostStatus', '<span class="text-warning">Stopping</span>');
+
+                await window.electronAPI.stopServices(settings);
+            } catch (error) {
+                console.error('Failed to stop services:', error);
+            }
+        });
+
+        // Utility function to update the status displayed for each service
+        function setServiceStatus(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = value;
+            }
+        }
+
+        function updateTimeline() {
+            const executionActive = document.getElementById('executionStatus').innerHTML.includes('Active');
+            const consensusActive = document.getElementById('consensusStatus').innerHTML.includes('Active');
+            const validatorActive = document.getElementById('validatorStatus').innerHTML.includes('Active');
+            const mevActive = document.getElementById('mevboostStatus').innerHTML.includes('Active');
+            const mevboostSetting = document.getElementById('mevboostValue').textContent === 'ON';
+
+            // Update icon states based on respective service states
+            document.getElementById('nodeIcon').parentNode.classList.toggle('active', executionActive && consensusActive);
+            document.getElementById('validatorIcon').parentNode.classList.toggle('active', validatorActive);
+            document.getElementById('mevIcon').parentNode.classList.toggle('active', mevActive && mevboostSetting);
+
+            // Update overall local status based on the icons in the timeline
+            updateLocalStatus(executionActive, consensusActive, validatorActive, mevActive, mevboostSetting);
+        }
+
+        function updateLocalStatus(executionActive, consensusActive, validatorActive, mevActive, mevboostSetting) {
+            // Adjust the criteria for being 'ACTIVE' based on the MEVBoost setting
+            let allActive;
+            if (mevboostSetting) {
+                allActive = executionActive && consensusActive && validatorActive && mevActive; // MEV is required if MEVBoost is ON
+            } else {
+                allActive = executionActive && consensusActive && validatorActive; // MEV is not required if MEVBoost is OFF
+            }
+
+            let localStatusElement = document.getElementById('localStatus');
+            localStatusElement.textContent = allActive ? 'ACTIVE' : 'OFFLINE';
+            localStatusElement.style.color = allActive ? '#28a745' : ''; // Green for active, red for offline
+        }
+
+        document.getElementById('mainMenuButton').onclick = function() {
+            window.api.openStartupPopup();
+            window.close();
+        };
+        document.getElementById('journalsButton').onclick = function() {
+            window.api.sendJournalsStart();
+        };
+        document.getElementById('view-journals').onclick = function() {
+            window.api.sendJournalsStart();
+        };
+        
+        document.getElementById('backLink').addEventListener('click', goBack);
+        document.getElementById('journalsLink').addEventListener('click', openJournals);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var viewJournalsElement = document.getElementById('view-journals');
+            if (viewJournalsElement) {
+                viewJournalsElement.addEventListener('click', openJournals);
+            }
+        });
+
+        function addValidator() {
+            const index = document.getElementById('validatorIndex').value;
+            if (index) {
+                fetchValidatorStatus(index);
+                document.getElementById('validatorIndex').value = ''; // Clear input after adding
+            }
+        }
+
+        function clearValidators() {
+            const container = document.getElementById('validatorStatusContainer');
+            container.innerHTML = ''; // Clears the list of validators
+        }
+
+        async function fetchValidatorStatus(index) {
+            try {
+                const url = `https://beaconcha.in/api/v1/validator/${index}`;
+                const response = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+                const data = await response.json();
+                if (data && data.data) {  // Ensure data and data.data exist
+                    displayValidatorStatus(index, data.data.status);  // Pass the nested status
+                } else {
+                    console.log('No data received');
+                }
+            } catch (error) {
+                console.error('Failed to fetch validator status:', error);
+            }
+        }
+
+        function displayValidatorStatus(index, status) {
+            const container = document.getElementById('validatorStatusContainer');
+            const statusClass = status === 'active_online' ? 'status-active' : 'status-inactive';
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `validator-status ${statusClass}`;
+            statusDiv.innerHTML = `${index}`;
+            container.appendChild(statusDiv);
+        }
+    </script>
+</body>
+</html>

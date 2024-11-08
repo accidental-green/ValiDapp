@@ -1,0 +1,146 @@
+body, html {
+    width: 100%;
+    height: 100%;
+    margin-top: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 100%;
+    padding: 20px;
+    margin-top: 0;
+}
+.nav-tabs .nav-link {
+    font-size: 1.5rem;
+    padding: 10px 10px;
+    border-radius: 5px 5px 0 0;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    background-color: #f8f9fa;
+    border-color: transparent;
+}
+
+.log-content {
+    white-space: pre;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 15px;
+    max-height: 90vh; /* Adjust this value based on your layout */
+    overflow-y: auto; /* Allows vertical scrolling within the log content */
+    overflow-x: auto; /* Allows horizontal scrolling within the log content */
+    font-family: Consolas, monospace;
+    font-size: 16px;
+}
+
+
+.validator-controls button {
+    font-size: 1.25rem;
+    padding: 10px 20px;
+}
+
+.text-right h5 .badge {
+    font-size: 1.25rem;
+    padding: .35em .65em;
+}
+
+h5, .badge {
+    margin-bottom: 0;
+}
+
+.row.text-center {
+    margin-bottom: 0.5rem;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5em 0.6em;
+}
+
+.info-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    padding-right: 30px;
+    font-size: 1.5rem;
+}
+
+.table-sm th, .table-sm td {
+    padding: 0.1rem;
+}
+
+
+.log-warn, .log-error {
+    color: red;
+}
+
+.log-info {
+    color: blue;
+}
+
+.active-services {
+    font-size: 1.5em;
+}
+
+.service-name {
+    font-weight: bold;
+    color: #000000;
+}
+
+.info-table td {
+  font-size: 16px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.info-table td:first-child {
+  width: 90px;
+  font-weight: normal;
+}
+
+.info-table td:nth-child(2),
+.info-table td:nth-child(3) {
+  width: 120px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.d-flex > div {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.nav-tabs {
+    margin-top: -30px;
+    position: relative;
+    z-index: 1;
+}
+
+.tab-content {
+    margin-top: -20px;
+}
+
+.container {
+    position: relative;
+    max-width: 100%;
+    padding: 20px;
+    margin: 10px auto; /* Provides some top margin for all content */
+}
+
+.button-container {
+    position: absolute;
+    top: 10px; /* Adjusted for minimal top spacing, not too high */
+    right: 10px; /* Right align the container */
+    display: flex; /* Align buttons in a row */
+    align-items: center; /* Center items vertically */
+    gap: 10px; /* Space between buttons */
+}
+
+.btn-back-to-mini {
+    padding: 5px 10px; /* Comfortable padding for the button */
+    font-size: 0.875rem;
+    border-radius: 5px; /* Rounded corners for aesthetics */
+}

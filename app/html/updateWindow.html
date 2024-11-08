@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validator Update</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 340px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            padding-top: 0;
+        }
+        .form-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        label {
+            flex: 0 0 180px;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-right: 10px;
+        }
+        select, input {
+            flex: 0 0 150px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: #ffffff;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        button {
+            width: 47%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin: 0 1%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-back-orange {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+        }
+        .button-back-orange:hover {
+            background-color: #e59400;
+
+        }
+
+        .note {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 16px;
+        }
+        .version-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            border: 2px solid #ddd;
+        }
+        th, td {
+            text-align: center;
+            padding: 8px;
+            font-size: 16px;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .select-heading {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .upgrade-info {
+            text-align: center;
+            color: #555;
+            font-size: 22px;
+            margin-bottom: 0px;
+            margin-top: 0px;
+        }
+
+        .update-prompt {
+            text-align: center;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        button:disabled:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="updateForm">
+            <h1>Validator Updater</h1>
+            <p class="select-heading">Currently Installed Versions</p>
+            <table id="versionTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Installed</th>
+                        <th>Latest</th>
+                    </tr>
+                </thead>
+                <tbody id="versionTableBody">
+                    <!-- Data rows will be inserted here dynamically -->
+                </tbody>
+            </table>
+            <p class="select-heading">Available To Upgrade:</p>
+            <p id="upgradeList" class="upgrade-info"></p>
+            <p id="updatePrompt" class="update-prompt"></p>
+            <div class="button-container">
+                <button class="button-back-orange" onclick="goBack()">Back</button>
+                <button type="button" id="updateValidatorBtn">Update Validator</button>
+            </div>
+                    
+        </form>
+    </div>
+    <script>
+        window.api.receive('get-installed-versions', (installedClients, latestClients) => {
+            const tableBody = document.getElementById('versionTableBody');
+            const upgradeList = document.getElementById('upgradeList');
+            const updatePrompt = document.getElementById('updatePrompt');
+            const updateButton = document.getElementById('updateValidatorBtn');
+            let upgradableClients = [];
+
+            // Clear previous entries
+            tableBody.innerHTML = '';
+            upgradeList.innerHTML = '';
+            updatePrompt.innerHTML = '';
+
+            installedClients.forEach(installedData => {
+                const installedClient = Object.keys(installedData)[0];
+                const installedVersion = installedData[installedClient];
+                // Find the corresponding latest version from the latestClients array
+                const latestData = latestClients.find(latest => latest.hasOwnProperty(installedClient));
+                let latestVersion = latestData ? latestData[installedClient] : 'Unavailable';
+
+                // Special handling for MEVboost
+                if (installedClient.toUpperCase() === 'MEVBOOST' && latestVersion === 'v1.8' && installedVersion === 'v1.8.1') {
+                    latestVersion = 'v1.8.1';  // Adjust the latest version for MEVboost
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${installedClient.toUpperCase()}</td>
+                    <td>${installedVersion}</td>
+                    <td>${latestVersion}</td>
+                `;
+                tableBody.appendChild(row);
+
+                // Check if an upgrade is available
+                if (installedVersion !== latestVersion && latestVersion !== 'Unavailable') {
+                    upgradableClients.push(`${installedClient.toUpperCase()} - ${latestVersion}`);
+                }
+            });
+
+            if (upgradableClients.length > 0) {
+                upgradeList.innerHTML = upgradableClients.join('<br>');
+                updateButton.disabled = false;
+                updateButton.textContent = 'Update Validator';
+            } else {
+                upgradeList.innerHTML = 'No updates available.';
+                updatePrompt.innerHTML = 'All clients are up-to-date.';
+                updateButton.disabled = true;
+                updateButton.textContent = 'No Updates';
+            }
+        });
+
+        document.getElementById('updateValidatorBtn').addEventListener('click', () => {
+            const upgradeList = document.getElementById('upgradeList').innerHTML;
+            const upgradableClients = upgradeList.split('<br>').map(client => client.split(' - ')[0].trim()); // Extract just the client names
+
+            let settings = {};
+            settings.execution = 'EMPTY'
+            settings.consensus = 'EMPTY'
+            settings.mevboost = 'EMPTY'
+
+            // Assign the right settings based on available upgrades
+            upgradableClients.forEach(client => {
+                if (client === "MEVBOOST") {
+                    settings.mevboost = "on"; // Enable MEV-Boost if available
+                } else if (["GETH", "BESU", "NETHERMIND"].includes(client)) {
+                    settings.execution = client.toLowerCase(); // Set execution client
+                } else if (["NIMBUS", "LIGHTHOUSE", "PRYSM", "TEKU"].includes(client)) {
+                    settings.consensus = client.toLowerCase(); // Set consensus client
+                }
+            });
+
+            // Send the settings to start the update process
+            if (Object.keys(settings).length > 0) {
+                window.api.sendUpdateStart(settings);
+            } else {
+                console.log("No updates available or detected."); // Log or handle the no update case
+            }
+        });
+
+        function goBack() {
+            window.api.openStartupPopup()
+            window.close();
+        }
+    </script>
+</body>
+</html>

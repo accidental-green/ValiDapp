@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpful Resources</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 10px;
+        }
+        p {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        button {
+            width: 250px; /* Sets a fixed width for all buttons */
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007aff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Helpful Resources</h1>
+        <p>These resources provide the knowledge and confidence needed to stake from home. Be sure to practice the entire staking process on testnet (Holesky or Sepolia) with test Eth before attempting to run a validator with real Eth on mainnet.</p>
+
+        <h2>EthStaker Community</h2>
+        <p>EthStaker aims to foster a vibrant and welcoming environment for anyone interested in Ethereum staking. Best way to get help is to post your question in their Discord</p>
+        <p>
+            <a><b>EthStaker:</b></a>
+            <a href="https://discord.com/invite/ethstaker" onclick="electronShell.openExternal(this.href); return false;">Discord</a> | 
+            <a href="https://reddit.com/r/ethstaker" onclick="electronShell.openExternal(this.href); return false;">Reddit</a> | 
+            <a href="https://ethstaker.cc/" onclick="electronShell.openExternal(this.href); return false;">Website</a> | 
+            <a href="https://docs.ethstaker.cc/ethstaker-knowledge-base/faq" onclick="electronShell.openExternal(this.href); return false;">FAQ</a>
+        </p>
+
+        <h2>Somer Esat's Staking Guides</h2>
+        <p>Somer's guides are the 'gold standard' for Ethereum home staking. Vali-Dapp is just an automated version of Somer's guides, so his guides offer a detailed explanation of the setup process for more technical users.</p>
+        <p>
+            <a><b>Somer Guides:</b></a>
+            <a href="https://someresat.medium.com/guide-to-staking-on-ethereum-ubuntu-nimbus-31f56657ea8f" onclick="electronShell.openExternal(this.href); return false;">Nimbus</a> | 
+            <a href="https://someresat.medium.com/guide-to-staking-on-ethereum-ubuntu-lighthouse-773f5d982e03" onclick="electronShell.openExternal(this.href); return false;">Lighthouse</a> | 
+            <a href="https://someresat.medium.com/guide-to-staking-on-ethereum-ubuntu-prysm-581fb1969460" onclick="electronShell.openExternal(this.href); return false;">Prysm</a> | 
+            <a href="https://someresat.medium.com/guide-to-staking-on-ethereum-ubuntu-teku-f09ecd9ef2ee" onclick="electronShell.openExternal(this.href); return false;">Teku</a>
+        </p>
+
+        <h2>Keystore Generation</h2>
+        <p>Learn how to securely generate and manage Ethereum keys.</p>
+        <p>
+            <a><b>Keystore Guides:</b></a>
+            <a href="https://agstakingco.gitbook.io/eth-2-0-key-generation-ubuntu-live-usb" onclick="electronShell.openExternal(this.href); return false;">Air-Gap Guide</a> | 
+            <a href="https://github.com/stake-house/wagyu-key-gen" onclick="electronShell.openExternal(this.href); return false;">Wagyu Key Gen</a> |
+            <a href="https://github.com/ethereum/staking-deposit-cli/releases" onclick="electronShell.openExternal(this.href); return false;">Staking Deposit CLI</a>
+        </p>
+        <div>
+        <button class="button-back-orange" id="backBtn">Back to Dashboard</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.api.sendDashboardStart();
+            window.close();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Clients Confirmation</title>
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .clients-list {
+            text-align: center;
+            color: #555;
+            font-size: 22px;
+            margin-top: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        button {
+            width: 47%;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: red;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: indianred;
+        }
+        .button-back {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+        }
+        .button-back:hover {
+            background-color: #e59400;
+
+        }
+        .warning {
+            font-size: 20px;
+            color: #333;
+            margin-top: 0px;
+            margin-bottom: 20px;
+            text-align: center;
+
+        }
+        .select-heading {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Deletion</h1>
+        <p class="warning">Please be sure to back up keystores before deleting clients.</p>
+        <p class="select-heading">Set To Delete:</p>
+
+        <p class="clients-list" id="deleteList">Loading...</p>
+        <div class="button-container">
+            <button class="button-back" onclick="goBack()">Back</button>
+            <button onclick="confirmDeletion()">Confirm Deletion</button>
+        </div>
+    </div>
+    <script>
+        let clientsToDelete = [];
+
+        window.api.receive('delete-settings', (settings) => {
+            clientsToDelete = settings;
+            const deleteListElement = document.getElementById('deleteList');
+            deleteListElement.textContent = clientsToDelete.join(', ');
+        });
+
+        function confirmDeletion() {
+            window.api.sendDeleteStart(clientsToDelete);
+            window.close();
+        }
+
+        function goBack() {
+            window.api.openDeletePopup(); // Assuming this will take the user back to the selection screen
+            window.close();
+
+        }
+    </script>
+</body>
+</html>
