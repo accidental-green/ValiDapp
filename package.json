@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --linux",
-    "postbuild": "chmod +x ./dist/linux-unpacked/resources/python/bin/python && chmod +x ./dist/linux-unpacked/resources/modules/*.py && ./venv/bin/pip install -r requirements.txt"
+    "postbuild": "chmod +x ./dist/linux-unpacked/resources/modules/*.py && ./venv/bin/pip install -r requirements.txt"
   },
   "build": {
     "asar": true,
@@ -46,15 +46,8 @@
         "to": "requirements.txt"
       },
       {
-        "from": "./venv/bin/python",
-        "to": "python/bin/python",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
         "from": "./venv/",
-        "to": "venv",
+        "to": "python",
         "filter": [
           "**/*"
         ]
@@ -69,3 +62,4 @@
   "keywords": [],
   "license": "ISC"
 }
+

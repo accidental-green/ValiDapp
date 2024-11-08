@@ -45,7 +45,7 @@ const services = [
 
 // Define the path to the virtual environment
 const venvPath = path.join(__dirname, '..', 'venv'); // Adjust the path accordingly
-const venvPythonPath = path.join(venvPath, 'bin', 'python');
+const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python');
 
 // Update environment variables to use the virtual environment's Python
 process.env.PATH = `${path.join(venvPath, 'bin')}:${process.env.PATH}`;
