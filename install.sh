@@ -15,7 +15,11 @@ install_python_and_dependencies() {
   if [ "$1" == "24.04" ]; then
     # Special handling for Ubuntu 24.04
     sudo apt install -y python3 python3-pip python3-requests libfuse2
+  elif [ "$1" == "22.04" ] || [ "$1" == "20.04" ]; then
+    # Use apt to install all dependencies
+    sudo apt install -y python3 python3-pip python3-requests libfuse2
   else
+    # General installation for other versions
     sudo apt install -y python3 python3-pip python3-requests libfuse2
   fi
 }
