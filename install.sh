@@ -59,6 +59,7 @@ create_desktop_icon() {
   mkdir -p /tmp/validapp-extract
   /usr/bin/validapp --appimage-extract -C /tmp/validapp-extract || true
 
+  # Check if the logo exists in the extracted files
   if [[ -f "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" ]]; then
     sudo mkdir -p /usr/share/pixmaps/
     sudo cp "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" "$logo_path"
@@ -66,6 +67,7 @@ create_desktop_icon() {
     echo "Warning: Logo not found in the extracted AppImage. Using default icon path."
   fi
 
+  # Create the desktop entry with the logo path
   cat <<EOF | sudo tee /usr/share/applications/validapp.desktop > /dev/null
 [Desktop Entry]
 Version=1.0
