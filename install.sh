@@ -15,11 +15,7 @@ install_python_and_dependencies() {
   if [ "$1" == "24.04" ]; then
     # Special handling for Ubuntu 24.04
     sudo apt install -y python3 python3-pip python3-requests libfuse2
-  elif [ "$1" == "22.04" ] || [ "$1" == "20.04" ]; then
-    # Use apt to install all dependencies
-    sudo apt install -y python3 python3-pip python3-requests libfuse2
   else
-    # General installation for other versions
     sudo apt install -y python3 python3-pip python3-requests libfuse2
   fi
 }
@@ -38,27 +34,37 @@ install_validapp() {
 set_chrome_sandbox_permissions() {
   echo "Setting permissions for chrome-sandbox..."
   
-  if [[ -f "/usr/bin/validapp/chrome-sandbox" ]]; then
-    sudo chmod 4755 /usr/bin/validapp/chrome-sandbox
+  chrome_sandbox_path="/usr/bin/validapp/chrome-sandbox"
+
+  if [[ -f "$chrome_sandbox_path" ]]; then
+    sudo chmod 4755 "$chrome_sandbox_path"
     echo "Permissions for chrome-sandbox have been set."
   else
-    echo "Warning: chrome-sandbox not found in /usr/bin/validapp. Trying to locate in runtime directory."
-    # Attempting to locate the chrome-sandbox in runtime
-    sudo chmod 4755 $(find /tmp/.mount_* -name chrome-sandbox 2>/dev/null) || {
-      echo "Failed to set permissions for chrome-sandbox. The application might not run correctly without proper sandboxing."
-    }
+    echo "Warning: chrome-sandbox not found in $chrome_sandbox_path. The application might not run correctly without proper sandboxing."
   fi
 }
 
-# Function to create desktop icon for ValiDapp
+# Function to extract logo and create a desktop icon for ValiDapp
 create_desktop_icon() {
-  echo "Creating desktop entry for ValiDapp..."
+  echo "Extracting logo and creating desktop entry for ValiDapp..."
+
+  # Extract the logo from the AppImage (assuming you have a logo in app/assets/logo.png within the AppImage)
+  mkdir -p /tmp/validapp-extract
+  ./usr/bin/validapp --appimage-extract -C /tmp/validapp-extract || true
+
+  if [[ -f "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" ]]; then
+    sudo mkdir -p /usr/share/pixmaps/
+    sudo cp "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" /usr/share/pixmaps/validapp.png
+  else
+    echo "Warning: Logo not found in the extracted AppImage. Using default icon path."
+  fi
+
   cat <<EOF | sudo tee /usr/share/applications/validapp.desktop > /dev/null
 [Desktop Entry]
 Version=1.0
 Name=ValiDapp
 Exec=/usr/bin/validapp
-Icon=/usr/bin/validapp
+Icon=/usr/share/pixmaps/validapp.png
 Terminal=false
 Type=Application
 Categories=Utility;
