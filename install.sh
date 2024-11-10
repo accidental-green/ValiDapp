@@ -34,13 +34,19 @@ install_validapp() {
 set_chrome_sandbox_permissions() {
   echo "Setting permissions for chrome-sandbox..."
   
-  chrome_sandbox_path="/usr/bin/validapp/chrome-sandbox"
+  # Extract AppImage to find chrome-sandbox
+  mkdir -p /tmp/validapp-extract
+  ./usr/bin/validapp --appimage-extract -C /tmp/validapp-extract || true
+
+  # Find the chrome-sandbox file in the extracted files
+  chrome_sandbox_path=$(find /tmp/validapp-extract -name "chrome-sandbox" | head -n 1)
 
   if [[ -f "$chrome_sandbox_path" ]]; then
     sudo chmod 4755 "$chrome_sandbox_path"
+    sudo mv "$chrome_sandbox_path" /usr/bin/
     echo "Permissions for chrome-sandbox have been set."
   else
-    echo "Warning: chrome-sandbox not found in $chrome_sandbox_path. The application might not run correctly without proper sandboxing."
+    echo "Warning: chrome-sandbox not found in the extracted files. The application might not run correctly without proper sandboxing."
   fi
 }
 
@@ -49,12 +55,13 @@ create_desktop_icon() {
   echo "Extracting logo and creating desktop entry for ValiDapp..."
 
   # Extract the logo from the AppImage (assuming you have a logo in app/assets/logo.png within the AppImage)
+  logo_path="/usr/share/pixmaps/validapp.png"
   mkdir -p /tmp/validapp-extract
   ./usr/bin/validapp --appimage-extract -C /tmp/validapp-extract || true
 
   if [[ -f "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" ]]; then
     sudo mkdir -p /usr/share/pixmaps/
-    sudo cp "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" /usr/share/pixmaps/validapp.png
+    sudo cp "/tmp/validapp-extract/squashfs-root/app/assets/logo.png" "$logo_path"
   else
     echo "Warning: Logo not found in the extracted AppImage. Using default icon path."
   fi
@@ -64,7 +71,7 @@ create_desktop_icon() {
 Version=1.0
 Name=ValiDapp
 Exec=/usr/bin/validapp
-Icon=/usr/share/pixmaps/validapp.png
+Icon=$logo_path
 Terminal=false
 Type=Application
 Categories=Utility;
