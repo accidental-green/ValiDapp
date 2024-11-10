@@ -43,17 +43,17 @@ const services = [
   'teku', 'mevboost'
 ];
 
-// Define the path to the virtual environment
-const venvPath = path.join(__dirname, '..', 'venv'); // Adjust the path accordingly
-const venvPythonPath = path.join(venvPath, 'bin', 'python');
+// Define the path to the system Python and set up the environment variables
+const pythonPath = 'python3'; // Assuming Python 3 is installed system-wide
+const pythonEnv = {
+  ...process.env,
+  PYTHONPATH: `/usr/lib/python3/dist-packages` // Update PYTHONPATH if needed for requests or other dependencies
+};
 
-// Update environment variables to use the virtual environment's Python
-process.env.PATH = `${path.join(venvPath, 'bin')}:${process.env.PATH}`;
-
-// Function to execute Python script with the virtual environment's Python interpreter
+// Function to execute Python script with the system's Python interpreter
 function executePythonScript(scriptPath, args = [], callback) {
-  const command = `${venvPythonPath} ${scriptPath} ${args.join(' ')}`;
-  exec(command, (error, stdout, stderr) => {
+  const command = `python3 ${scriptPath} ${args.join(' ')}`; // Use system Python (assuming python3 is installed)
+  exec(command, { env: pythonEnv }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Execution error: ${error.message}`);
       return;
@@ -98,53 +98,38 @@ function checkSudoPrivileges() {
 }
 
 function fetchInstalledClients(callback) {
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
-
   const scriptPath = path.join(process.resourcesPath, 'modules', 'prints.py'); // Assume app is packaged
 
-  exec(`${pythonPath} ${scriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-          console.error(`Execution error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.error(`Script error output: ${stderr}`);
-          return;
-      }
+  // Use system Python (assuming python3 is installed)
+  const command = `python3 ${scriptPath}`;
 
-      const jsonOutputLine = stdout.split('\n').find(line => line.startsWith('JSON_INSTALLED:'));
-      if (jsonOutputLine) {
-          try {
-              const installedClients = JSON.parse(jsonOutputLine.replace('JSON_INSTALLED: ', ''));
-              console.log('Installed Clients:', installedClients);
-              global.installedClients = installedClients;
-              showClientNames(installedClients);
-          } catch (parseError) {
-              console.error('Error parsing JSON from Python script:', parseError);
-          }
-      } else {
-          console.error('No JSON output found in the script response.');
-      }
+  exec(command, { env: pythonEnv }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Execution error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Script error output: ${stderr}`);
+      return;
+    }
 
-      if (callback) {
-          callback();
+    const jsonOutputLine = stdout.split('\n').find(line => line.startsWith('JSON_INSTALLED:'));
+    if (jsonOutputLine) {
+      try {
+        const installedClients = JSON.parse(jsonOutputLine.replace('JSON_INSTALLED: ', ''));
+        console.log('Installed Clients:', installedClients);
+        global.installedClients = installedClients;
+        showClientNames(installedClients);
+      } catch (parseError) {
+        console.error('Error parsing JSON from Python script:', parseError);
       }
-  });
-}
+    } else {
+      console.error('No JSON output found in the script response.');
+    }
 
-function createDesktopIcon() {
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
-  const pythonScriptPath = path.join(process.resourcesPath, 'modules', 'desktopIcon.py'); // Assume app is packaged
-
-  exec(`${pythonPath} ${pythonScriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-          console.error(`Error creating desktop entry: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.error(`Error output: ${stderr}`);
-      }
-      console.log(`Desktop Script output: ${stdout}`);
+    if (callback) {
+      callback();
+    }
   });
 }
 
@@ -155,10 +140,9 @@ function showClientNames(installedClients) {
 }
 
 function fetchLatestVersions(callback) {
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const scriptPath = path.join(process.resourcesPath, 'modules', 'latest_versions.py'); // Assume app is packaged
 
-  exec(`${pythonPath} ${scriptPath}`, (error, stdout, stderr) => {
+  exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Execution error: ${error.message}`);
       return;
@@ -233,10 +217,9 @@ async function startServices(data) {
 
   console.log("Starting services with the following configuration:", data);
 
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const pythonScriptPath = path.join(process.resourcesPath, 'modules', 'start.py'); // Assume app is packaged
 
-  const command = `${pythonPath} ${pythonScriptPath} '${data.execution}' '${data.consensus}' '${data.validator}' '${data.mevboost}'`;
+  const command = `python3 ${pythonScriptPath} '${data.execution}' '${data.consensus}' '${data.validator}' '${data.mevboost}'`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -262,10 +245,9 @@ async function stopServices(data) {
 
   console.log("Stopping services with the following configuration:", data);
 
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const pythonScriptPath = path.join(process.resourcesPath, 'modules', 'stop.py'); // Assume app is packaged
 
-  const command = `${pythonPath} ${pythonScriptPath} '${data.execution}' '${data.consensus}' '${data.validator}' '${data.mevboost}'`;
+  const command = `python3 ${pythonScriptPath} '${data.execution}' '${data.consensus}' '${data.validator}' '${data.mevboost}'`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -538,7 +520,6 @@ app.disableHardwareAcceleration();
 app.whenReady().then(() => {
   firstCheckSudoPrivileges();
   createLoadingWindow();
-  createDesktopIcon();
   fetchInstalledClients(() => {
     const multipleExecutionClientsInstalled = checkMultipleInstallations(executionClients);
     const multipleConsensusClientsInstalled = checkMultipleInstallations(consensusClients);
@@ -879,11 +860,10 @@ ipcMain.on('start-installation', (event, settings) => {
   console.log("\nStarting installation with settings:");
   console.table(settings);
 
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const scriptPath = path.join(process.resourcesPath, 'modules', 'installer.py'); // Assume app is packaged
 
-  const args = [settings.network, settings.execution, settings.consensus, settings.mevboost, settings.feeAddress];
-  const childProcess = spawn(pythonPath, ['-u', scriptPath, ...args]);
+  const args = ['-u', scriptPath, settings.network, settings.execution, settings.consensus, settings.mevboost, settings.feeAddress];
+  const childProcess = spawn('python3', args);
 
   childProcess.stdout.on('data', (data) => {
       const message = data.toString();
@@ -904,7 +884,6 @@ ipcMain.on('start-installation', (event, settings) => {
 
   handleChildProcessOutput(childProcess);
 });
-
 
 function postInstallationCheck() {
   fetchInstalledClients(() => {
@@ -937,11 +916,10 @@ ipcMain.on('start-update', (event, settings) => {
 
   global.appSettings = settings;
 
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const scriptPath = path.join(process.resourcesPath, 'modules', 'updater.py'); // Assume app is packaged
 
-  const args = [settings.execution, settings.consensus, settings.mevboost];
-  const childProcess = spawn(pythonPath, ['-u', scriptPath, ...args]);
+  const args = ['-u', scriptPath, settings.execution, settings.consensus, settings.mevboost];
+  const childProcess = spawn('python3', args);
 
   childProcess.stdout.on('data', (data) => {
     let message = data.toString();
@@ -1180,7 +1158,6 @@ ipcMain.on('start-delete', (event, clientsToDelete) => {
 });
 
 function deleteClient(clientName) {
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const pythonScriptPath = path.join(process.resourcesPath, 'modules', 'deleter.py'); // Assume app is packaged
 
   const clientFunctionName = `delete_${clientName.toLowerCase()}`;
@@ -1189,35 +1166,35 @@ function deleteClient(clientName) {
   const env = { ...process.env }; // Inherit existing environment variables
 
   // Execute the Python script with the function name as an argument
-  const childProcess = spawn(pythonPath, [pythonScriptPath, clientFunctionName], { env });
+  const childProcess = spawn('python3', [pythonScriptPath, clientFunctionName], { env });
 
   // Handle output from the child process
   childProcess.stdout.on('data', (data) => {
-      let message = data.toString();
-      console.log(message); // Log all output for debugging
+    let message = data.toString();
+    console.log(message); // Log all output for debugging
 
-      // Forward only the relevant "successfully deleted" messages to the renderer
-      if (message.includes("Successfully Deleted")) {
-          if (deleteProgress) {
-              deleteProgress.webContents.send('process-output', message);
-          }
+    // Forward only the relevant "successfully deleted" messages to the renderer
+    if (message.includes("Successfully Deleted")) {
+      if (deleteProgress) {
+        deleteProgress.webContents.send('process-output', message);
       }
+    }
   });
 
   childProcess.stderr.on('data', (data) => {
-      console.error(`ERROR: ${data.toString()}`);
-      if (deleteProgress) {
-          deleteProgress.webContents.send('process-output', `ERROR: ${data.toString()}`);
-      }
+    console.error(`ERROR: ${data.toString()}`);
+    if (deleteProgress) {
+      deleteProgress.webContents.send('process-output', `ERROR: ${data.toString()}`);
+    }
   });
 
   childProcess.on('close', (code) => {
-      console.log(`${clientName} deletion process exited with code ${code}`);
-      let message = code === 0 ? "----DELETION PROCESS COMPLETE----" : `EXIT - PROCESS FAILED AT THIS POINT WITH CODE ${code}`;
-      if (deleteProgress) {
-          deleteProgress.webContents.send('process-complete', message);
-      }
-      postInstallationCheck();
+    console.log(`${clientName} deletion process exited with code ${code}`);
+    let message = code === 0 ? "----DELETION PROCESS COMPLETE----" : `EXIT - PROCESS FAILED AT THIS POINT WITH CODE ${code}`;
+    if (deleteProgress) {
+      deleteProgress.webContents.send('process-complete', message);
+    }
+    postInstallationCheck();
   });
 }
 
@@ -1237,7 +1214,6 @@ ipcMain.on('start-import', (event, settings) => {
   console.log("\nStarting import with settings:");
   console.log("\nNetwork: ", settings.network, "\nConsensus: ", settings.consensus, "\nKeystore Path: ", settings.keystorePath);
 
-  const pythonPath = path.join(process.resourcesPath, 'python', 'bin', 'python'); // Adjusted to use the packaged Python
   const scriptPath = path.join(process.resourcesPath, 'modules', 'importer.py'); // Assume app is packaged
 
   const env = {
@@ -1246,7 +1222,7 @@ ipcMain.on('start-import', (event, settings) => {
   };
 
   const args = [settings.network, settings.consensus, settings.keystorePath];
-  const childProcess = spawn(pythonPath, ['-u', scriptPath, ...args], { env });
+  const childProcess = spawn('python3', ['-u', scriptPath, ...args], { env });
 
   childProcess.stderr.on('data', (data) => {
     let message = data.toString();
