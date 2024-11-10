@@ -16,8 +16,7 @@ install_python_and_dependencies() {
     # Special handling for Ubuntu 24.04
     sudo apt install -y python3 python3-pip python3-requests libfuse2
   else
-    sudo apt install -y python3 python3-pip libfuse2
-    sudo pip3 install requests
+    sudo apt install -y python3 python3-pip python3-requests libfuse2
   fi
 }
 
@@ -28,15 +27,23 @@ install_validapp() {
   chmod +x ValiDapp-1.0.0.AppImage
   sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp
 
-  # Update permissions for chrome-sandbox to enable sandboxing
+  echo "ValiDapp has been successfully installed. You can run it by typing 'validapp'"
+}
+
+# Function to set permissions for chrome-sandbox
+set_chrome_sandbox_permissions() {
   echo "Setting permissions for chrome-sandbox..."
+  
   if [[ -f "/usr/bin/validapp/chrome-sandbox" ]]; then
     sudo chmod 4755 /usr/bin/validapp/chrome-sandbox
+    echo "Permissions for chrome-sandbox have been set."
   else
-    echo "Warning: chrome-sandbox not found in /usr/bin/validapp. Please ensure it is correctly bundled."
+    echo "Warning: chrome-sandbox not found in /usr/bin/validapp. Trying to locate in runtime directory."
+    # Attempting to locate the chrome-sandbox in runtime
+    sudo chmod 4755 $(find /tmp/.mount_* -name chrome-sandbox 2>/dev/null) || {
+      echo "Failed to set permissions for chrome-sandbox. The application might not run correctly without proper sandboxing."
+    }
   fi
-
-  echo "ValiDapp has been successfully installed. You can run it by typing 'validapp'"
 }
 
 # Function to create desktop icon for ValiDapp
@@ -69,6 +76,7 @@ case "$ubuntu_version" in
 esac
 
 install_validapp
+set_chrome_sandbox_permissions
 create_desktop_icon
 
 # Run the application
