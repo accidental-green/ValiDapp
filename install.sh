@@ -27,6 +27,12 @@ install_validapp() {
   chmod +x ValiDapp-1.0.0.AppImage
   ./ValiDapp-1.0.0.AppImage --appimage-extract
 
+  # Remove existing /opt/validapp directory if it exists
+  if [ -d "/opt/validapp" ]; then
+    echo "/opt/validapp already exists. Removing it..."
+    sudo rm -rf /opt/validapp
+  fi
+
   # Move extracted files to /opt/validapp
   sudo mv squashfs-root /opt/validapp
 
