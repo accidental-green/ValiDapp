@@ -16,13 +16,14 @@ install_python_and_dependencies() {
     # Special handling for Ubuntu 24.04
     sudo apt install -y python3 python3-pip python3-requests libfuse2
   else
-    sudo apt install -y python3 python3-pip python3-requests libfuse2
+    sudo apt install -y python3 python3-pip libfuse2
+    sudo pip3 install requests
   fi
 }
 
-# Function to install ValiDapp
-install_validapp() {
-  echo "Downloading and extracting ValiDapp..."
+# Function to install ValiDapp for Ubuntu 24.04 (extracting the AppImage)
+install_validapp_24_04() {
+  echo "Downloading and extracting ValiDapp for Ubuntu 24.04..."
   wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage -O ValiDapp-1.0.0.AppImage
   chmod +x ValiDapp-1.0.0.AppImage
   ./ValiDapp-1.0.0.AppImage --appimage-extract
@@ -42,6 +43,16 @@ install_validapp() {
 
   # Create a symlink to the executable in /usr/bin for easy access
   sudo ln -sf /opt/validapp/validapp /usr/bin/validapp
+
+  echo "ValiDapp has been successfully installed. You can run it by typing 'validapp'"
+}
+
+# Function to install ValiDapp for Ubuntu 20.04 and 22.04 (direct AppImage usage)
+install_validapp_20_22() {
+  echo "Downloading and installing ValiDapp for Ubuntu 20.04/22.04..."
+  wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage -O ValiDapp-1.0.0.AppImage
+  chmod +x ValiDapp-1.0.0.AppImage
+  sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp
 
   echo "ValiDapp has been successfully installed. You can run it by typing 'validapp'"
 }
@@ -66,16 +77,21 @@ EOF
 ubuntu_version=$(get_ubuntu_version)
 
 case "$ubuntu_version" in
-  "20.04"|"22.04"|"24.04")
+  "20.04"|"22.04")
     install_python_and_dependencies "$ubuntu_version"
+    install_validapp_20_22
+    ;;
+  "24.04")
+    install_python_and_dependencies "$ubuntu_version"
+    install_validapp_24_04
     ;;
   *)
     echo "Unsupported Ubuntu version or non-Ubuntu system detected. Attempting general installation."
     install_python_and_dependencies "other"
+    install_validapp_20_22
     ;;
 esac
 
-install_validapp
 create_desktop_icon
 
 # Run the application
