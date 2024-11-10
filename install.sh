@@ -12,8 +12,13 @@ get_ubuntu_version() {
 install_python_and_dependencies() {
   echo "Installing dependencies for Ubuntu $1"
   sudo apt update
-  sudo apt install -y python3 python3-pip libfuse2
-  sudo pip3 install requests
+  if [ "$1" == "24.04" ]; then
+    # Special handling for Ubuntu 24.04
+    sudo apt install -y python3 python3-pip python3-requests libfuse2
+  else
+    sudo apt install -y python3 python3-pip libfuse2
+    sudo pip3 install requests
+  fi
 }
 
 # Function to install ValiDapp
