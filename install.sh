@@ -12,42 +12,32 @@ get_ubuntu_version() {
 install_python_and_dependencies() {
   echo "Installing dependencies for Ubuntu $1"
   sudo apt update
-  sudo apt install -y python3 python3-requests libfuse2
+  if [ "$1" == "24.04" ]; then
+    # Special handling for Ubuntu 24.04
+    sudo apt install -y python3 python3-pip python3-requests libfuse2
+  else
+    sudo apt install -y python3 python3-pip python3-requests libfuse2
+  fi
 }
 
 # Function to install ValiDapp
 install_validapp() {
-  echo "Downloading and installing ValiDapp..."
+  echo "Downloading and extracting ValiDapp..."
   wget https://github.com/accidental-green/ValiDapp/releases/download/v1.0.0-alpha/ValiDapp-1.0.0.AppImage -O ValiDapp-1.0.0.AppImage
   chmod +x ValiDapp-1.0.0.AppImage
-  sudo mv ValiDapp-1.0.0.AppImage /usr/bin/validapp
+  ./ValiDapp-1.0.0.AppImage --appimage-extract
+
+  # Move extracted files to /opt/validapp
+  sudo mv squashfs-root /opt/validapp
+
+  # Set the correct permissions for chrome-sandbox
+  sudo chown root:root /opt/validapp/chrome-sandbox
+  sudo chmod 4755 /opt/validapp/chrome-sandbox
+
+  # Create a symlink to the executable in /usr/bin for easy access
+  sudo ln -sf /opt/validapp/validapp /usr/bin/validapp
 
   echo "ValiDapp has been successfully installed. You can run it by typing 'validapp'"
-}
-
-# Function to extract the AppImage and set permissions for chrome-sandbox
-set_chrome_sandbox_permissions() {
-  echo "Extracting ValiDapp and setting permissions for chrome-sandbox..."
-  
-  # Create a temporary directory for extraction
-  temp_dir=$(mktemp -d)
-  cp /usr/bin/validapp "$temp_dir/"
-  cd "$temp_dir"
-  
-  # Extract the AppImage
-  ./validapp --appimage-extract
-
-  # Set permissions for chrome-sandbox
-  if [[ -f "$temp_dir/squashfs-root/chrome-sandbox" ]]; then
-    sudo chmod 4755 "$temp_dir/squashfs-root/chrome-sandbox"
-    echo "Permissions for chrome-sandbox have been set."
-  else
-    echo "Warning: chrome-sandbox not found in the extracted files. The application might not run correctly without proper sandboxing."
-  fi
-
-  # Clean up
-  cd -
-  rm -rf "$temp_dir"
 }
 
 # Function to create desktop icon for ValiDapp
@@ -58,7 +48,7 @@ create_desktop_icon() {
 Version=1.0
 Name=ValiDapp
 Exec=/usr/bin/validapp
-Icon=/usr/bin/validapp
+Icon=/opt/validapp/resources/app/assets/logo.png
 Terminal=false
 Type=Application
 Categories=Utility;
@@ -80,7 +70,6 @@ case "$ubuntu_version" in
 esac
 
 install_validapp
-set_chrome_sandbox_permissions
 create_desktop_icon
 
 # Run the application
