@@ -16,7 +16,7 @@ To install ValiDapp on Ubuntu, follow these steps:
 ### ValiDapp Installation Command:
 
 ```bash
-sudo apt update && sudo apt install -y curl && bash <(curl -s https://raw.githubusercontent.com/accidental-green/ValiDapp/main/install.sh)
+sudo timedatectl set-ntp true && sudo apt-get update --allow-releaseinfo-change || true && sudo apt install -y curl && bash <(curl -s https://raw.githubusercontent.com/accidental-green/ValiDapp/main/install.sh)
 ```
 
 After entering your password, the required packages will be installed, and ValiDapp will open automatically once installation is complete.
