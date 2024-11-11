@@ -12,6 +12,10 @@ get_ubuntu_version() {
 install_python_and_dependencies() {
   echo "Installing dependencies for Ubuntu $1"
   sudo apt update
+  # Enable universe repository for Ubuntu
+  sudo add-apt-repository universe
+  sudo apt update
+  
   if [ "$1" == "24.04" ]; then
     # Special handling for Ubuntu 24.04
     sudo apt install -y python3 python3-pip python3-requests libfuse2
