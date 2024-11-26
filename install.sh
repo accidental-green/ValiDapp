@@ -11,10 +11,10 @@ get_ubuntu_version() {
 # Function to install Python and dependencies
 install_python_and_dependencies() {
   echo "Installing dependencies for Ubuntu $1"
-  sudo apt update
+  sudo apt update -y
   # Enable universe repository for Ubuntu
-  sudo add-apt-repository universe
-  sudo apt update
+  sudo add-apt-repository universe -y
+  sudo apt update -y
   
   if [ "$1" == "24.04" ]; then
     # Special handling for Ubuntu 24.04
